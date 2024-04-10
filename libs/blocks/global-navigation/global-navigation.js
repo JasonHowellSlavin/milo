@@ -906,6 +906,10 @@ class Gnav {
   };
 
   decorateBreadcrumbs = async () => {
+    if (getMetadata('dynamic-nav') === 'on' && window.sessionStorage.getItem('gnavSource') !== null) {
+      document.querySelector('header').classList.remove('has-breadcrumbs');
+      return null;
+    }
     if (!this.block.classList.contains('has-breadcrumbs')) return null;
     if (this.elements.breadcrumbsWrapper) return this.elements.breadcrumbsWrapper;
     const breadcrumbsElem = this.block.querySelector('.breadcrumbs');
@@ -947,10 +951,20 @@ class Gnav {
   };
 }
 
+const getSource = async () => {
+  const { locale, dynamicNavKey } = getConfig();
+  let url = getMetadata('gnav-source') || `${locale.contentRoot}/gnav`;
+  if (dynamicNavKey) {
+    const { default: dynamicNav } = await import('../../features/dynamic-navigation.js');
+    url = dynamicNav(url, dynamicNavKey);
+  }
+  return url;
+};
+
 export default async function init(block) {
   try {
-    const { locale, mep } = getConfig();
-    const url = getMetadata('gnav-source') || `${locale.contentRoot}/gnav`;
+    const { mep } = getConfig();
+    const url = await getSource();
     const content = await fetchAndProcessPlainHtml({ url })
       .catch((e) => lanaLog({
         message: `Error fetching gnav content url: ${url}`,
