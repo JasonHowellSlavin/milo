@@ -7,8 +7,7 @@ function isDynamicNavDisabled() {
   const metadataPairsMap = dynamicNavDisableValues.split(',').map((pair) => pair.split(';'));
   return metadataPairsMap.some(([metadataKey, metadataContent]) => {
     const metaTagContent = getMetadata(metadataKey.toLowerCase());
-    return (metaTagContent
-        && metaTagContent.toLowerCase() === metadataContent.toLowerCase());
+    return (metaTagContent?.toLowerCase().trim() === metadataContent.toLowerCase().trim());
   });
 }
 

@@ -58,6 +58,12 @@ describe('Dynamic nav', () => {
     expect(url).to.equal('gnav/aem-sites');
   });
 
+  it('Returns the provided url when ignore items match metadata even with an extra space in content', async () => {
+    document.head.innerHTML = await readFile({ path: './mocks/on-ignore-match-extra-space.html' });
+    const url = dynamicNav('gnav/aem-sites', 'bacom');
+    expect(url).to.equal('gnav/aem-sites');
+  });
+
   it('Returns the sessionStorage url when dynamic nav ignore items are present but do not match the metadata', async () => {
     document.head.innerHTML = await readFile({ path: './mocks/on-ignore-does-not-match.html' });
     const url = dynamicNav('gnav/aem-sites', 'bacom');
