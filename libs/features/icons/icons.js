@@ -51,7 +51,7 @@ async function getSVGsfromFile(path) {
 }
 
 async function fetchAndParseSVG(url, iconName) {
-  const response = await fetch(url);
+  const response = await fetch(url, { credentials: 'omit' });
   if (!response.ok) throw new Error(`Failed to fetch SVG for ${iconName}: ${response.statusText}`);
 
   const text = await response.text();
@@ -110,6 +110,31 @@ export default async function loadIcons(icons) {
     if (iconNameInitial.includes('tooltip-')) iconName = iconNameInitial.replace(/tooltip-/, '');
     decorateToolTip(icon, iconName);
     if (icon.dataset.svgInjected || !iconName) return;
+
+    // Check if icon was preloaded - use CSS background-image instead of fetch/parse
+    const preloadLink = document.querySelector(`link[rel="preload"][data-icon-name="${iconName}"]`);
+    if (preloadLink) {
+      const url = preloadLink.getAttribute('href');
+      // Only use CSS approach for federal icons (matching the preload URL pattern)
+      if (url && url.includes('/federal/assets/icons/svgs/')) {
+        icon.classList.add('preload-icon');
+        icon.style.backgroundImage = `url(${url})`;
+        icon.dataset.svgInjected = 'true';
+
+        const parent = icon.parentElement;
+        if (parent?.childNodes.length > 1) {
+          if (parent.lastChild === icon) {
+            icon.classList.add('margin-inline-start');
+          } else if (parent.firstChild === icon) {
+            icon.classList.add('margin-inline-end');
+            if (parent.parentElement.tagName === 'LI') parent.parentElement.classList.add('icon-list-item');
+          } else {
+            icon.classList.add('margin-inline-start', 'margin-inline-end');
+          }
+        }
+        return;
+      }
+    }
 
     const svgElement = await getIcon(iconName);
     if (svgElement && !icon.dataset.svgInjected) {
