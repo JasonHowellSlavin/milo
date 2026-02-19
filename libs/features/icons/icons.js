@@ -51,7 +51,7 @@ async function getSVGsfromFile(path) {
 }
 
 async function fetchAndParseSVG(url, iconName) {
-  const response = await fetch(url, { credentials: 'omit' });
+  const response = await fetch(url);
   if (!response.ok) throw new Error(`Failed to fetch SVG for ${iconName}: ${response.statusText}`);
 
   const text = await response.text();
