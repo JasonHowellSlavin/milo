@@ -208,15 +208,15 @@ describe('Brand Concierge', () => {
     // Wait for openChatModal
     await new Promise((resolve) => {
       const check = () => {
-        if (window.adobe.concierge.bootstrap.calledOnce) resolve();
+        if (window.adobe?.concierge?.bootstrap?.calledOnce) resolve();
         else setTimeout(check, 10);
       };
       check();
     });
 
     // Verify bootstrap was called
-    expect(window.adobe.concierge.bootstrap.calledOnce).to.be.true;
-    expect(window.adobe.concierge.bootstrap.firstCall.args[0]).to.deep.include({
+    expect(window?.adobe?.concierge?.bootstrap?.calledOnce).to.be.true;
+    expect(window?.adobe?.concierge?.bootstrap?.firstCall.args[0]).to.deep.include({
       selector: '#brand-concierge-mount',
       instanceName: 'alloy',
     });
